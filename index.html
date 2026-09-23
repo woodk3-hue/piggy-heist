@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FF7AA8">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Piggy Heist">
+<title>Piggy Heist</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Lexend:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#BDE7FF; --bg-deep:#94D5FF; --ink:#2B1B4A; --muted:#54477A;
+  --pig:#FF7AA8; --pig-deep:#E0508A; --pig-light:#FFD3E3;
+  --coin:#FFC233; --coin-deep:#E09B00; --mint:#1FBF8A; --danger:#D6334F;
+  --paper:#FFFFFF; --on-pig:#2B1B4A;
+  --display:"Bagel Fat One","Arial Rounded MT Bold","Trebuchet MS",system-ui,sans-serif;
+  --body:"Lexend","Segoe UI",Roboto,system-ui,sans-serif;
+  --line:3px solid var(--ink); --pop:4px 4px 0 var(--ink);
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#1B1433; --bg-deep:#2A2050; --ink:#F3ECFF; --muted:#B9ACDD;
+    --pig:#FF8DB6; --pig-deep:#FF6FA3; --pig-light:#5A3558;
+    --coin:#FFCB4D; --coin-deep:#FFB000; --mint:#3FE0A8; --danger:#FF6B82;
+    --paper:#2A2050; --on-pig:#1B1433;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1B1433; --bg-deep:#2A2050; --ink:#F3ECFF; --muted:#B9ACDD;
+  --pig:#FF8DB6; --pig-deep:#FF6FA3; --pig-light:#5A3558;
+  --coin:#FFCB4D; --coin-deep:#FFB000; --mint:#3FE0A8; --danger:#FF6B82;
+  --paper:#2A2050; --on-pig:#1B1433;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;
+  background-image:radial-gradient(circle at 1px 1px, color-mix(in srgb,var(--ink) 12%,transparent) 1.5px, transparent 0);
+  background-size:22px 22px;min-height:100%}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--coin-deep);outline-offset:3px}
+.wrap{max-width:560px;margin:0 auto;padding:12px 16px 96px}
+h1,h2,h3,.display{font-family:var(--display);font-weight:400;letter-spacing:.2px;margin:0;line-height:1.1}
+
+/* Top bar */
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 0 10px}
+.brand{display:flex;align-items:center;gap:8px;background:none;border:0;padding:0}
+.brand svg{width:40px;height:34px}
+.brand span{font-family:var(--display);font-size:24px}
+.icon-btn{width:44px;height:44px;border-radius:14px;border:var(--line);background:var(--paper);box-shadow:var(--pop);display:grid;place-items:center;padding:0}
+.icon-btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink)}
+.icon-btn svg{width:22px;height:22px}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:var(--line);border-radius:999px;padding:12px 20px;font-weight:700;background:var(--paper);box-shadow:var(--pop);transition:transform .08s,box-shadow .08s;min-height:48px}
+.btn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--ink)}
+.btn.pig{background:var(--pig);color:var(--on-pig)}
+.btn.coin{background:var(--coin);color:#2B1B4A}
+.btn.mint{background:var(--mint);color:#1B1433}
+.btn.danger{background:var(--danger);color:#fff}
+.btn.block{width:100%}
+.btn.big{font-family:var(--display);font-weight:400;font-size:22px;padding:16px 22px;min-height:64px}
+.link-btn{background:none;border:0;padding:8px 4px;font-weight:700;color:var(--muted);text-decoration:underline;text-underline-offset:3px}
+.link-btn.danger{color:var(--danger)}
+
+/* Home hero */
+.hero{display:flex;align-items:flex-end;gap:10px;margin:8px 0 22px}
+.hero .pigbtn{background:none;border:0;padding:0;flex:0 0 132px}
+.hero .pigbtn svg{width:132px;height:112px;display:block}
+.bubble{position:relative;background:var(--paper);border:var(--line);border-radius:20px 20px 20px 6px;padding:12px 14px;box-shadow:var(--pop);margin-bottom:40px;font-weight:500}
+.bubble strong{font-family:var(--display);font-weight:400;font-size:26px;display:block;line-height:1.1;color:var(--pig-deep)}
+.bubble::before{content:"";position:absolute;left:-14px;bottom:10px;border:8px solid transparent;border-right:12px solid var(--ink)}
+.section-h{font-family:var(--display);font-size:20px;margin:26px 0 10px}
+
+/* Challenge cards */
+.cards{display:grid;gap:14px}
+.card{display:block;width:100%;text-align:left;background:var(--paper);border:var(--line);border-radius:18px;padding:14px 16px;box-shadow:var(--pop)}
+.card:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--ink)}
+.card h3{font-size:22px;margin-bottom:4px;overflow-wrap:anywhere}
+.card .amt{font-weight:700}
+.card .meta{display:flex;flex-wrap:wrap;gap:6px 14px;color:var(--muted);font-size:14px;margin-top:8px}
+.badge{display:inline-block;background:var(--coin);color:#2B1B4A;border:2px solid var(--ink);border-radius:999px;padding:1px 10px;font-size:13px;font-weight:700}
+.bar{height:18px;border:var(--line);border-radius:999px;background:var(--pig-light);overflow:hidden;margin-top:8px}
+.bar i{display:block;height:100%;background:repeating-linear-gradient(-45deg,var(--pig) 0 10px,var(--pig-deep) 10px 20px);border-right:3px solid var(--ink);transition:width .8s cubic-bezier(.3,1.4,.5,1)}
+.bar i.zero{border-right:0}
+.card.done{background:color-mix(in srgb,var(--mint) 22%,var(--paper))}
+.empty{background:var(--paper);border:3px dashed var(--ink);border-radius:18px;padding:18px;text-align:center;color:var(--muted)}
+
+/* Challenge screen */
+.back{display:inline-flex;align-items:center;gap:6px;background:none;border:0;padding:8px 0;font-weight:700;color:var(--muted)}
+.ch-title{font-size:32px;margin:4px 0 14px;overflow-wrap:anywhere}
+.ch-hero{display:grid;grid-template-columns:150px 1fr;gap:12px;align-items:center;background:var(--paper);border:var(--line);border-radius:22px;padding:14px;box-shadow:var(--pop)}
+.ch-hero .meter svg{width:150px;height:128px;display:block}
+.ch-hero .meter.bounce svg{animation:squish .7s cubic-bezier(.3,1.6,.5,1)}
+.stat-big{font-family:var(--display);font-size:38px;line-height:1;color:var(--pig-deep)}
+.stat-sub{font-weight:700;margin-top:6px}
+.stat-small{color:var(--muted);font-size:14px}
+.pace{margin:14px 2px 0;font-weight:500}
+.pace .ahead{color:var(--mint);font-weight:700}
+.pace .behind{color:var(--danger);font-weight:700}
+.reveal-zone{margin:20px 0 8px}
+.upnext{display:flex;align-items:center;gap:14px;background:var(--coin);color:#2B1B4A;border:var(--line);border-radius:22px;padding:14px;box-shadow:var(--pop)}
+.upnext .amt{font-family:var(--display);font-size:36px;line-height:1}
+.upnext .lbl{font-weight:700;font-size:14px}
+.upnext .grow{flex:1}
+.done-banner{background:var(--mint);color:#1B1433;border:var(--line);border-radius:22px;padding:16px;box-shadow:var(--pop);text-align:center}
+.done-banner .display{font-size:26px}
+
+.grid-h{display:flex;justify-content:space-between;align-items:baseline;margin:24px 0 10px}
+.grid-h h2{font-size:20px}
+.grid-h span{color:var(--muted);font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(58px,1fr));gap:8px}
+.box{aspect-ratio:1;border:var(--line);border-radius:12px;background:var(--paper);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0;position:relative;box-shadow:2px 2px 0 var(--ink);line-height:1}
+.box .n{font-size:11px;font-weight:700;color:var(--muted)}
+.box .q{font-family:var(--display);font-size:24px;color:var(--bg-deep);-webkit-text-stroke:1.5px var(--ink)}
+.box.saved{background:var(--pig)}
+.box.saved .v{font-family:var(--display);font-size:17px;color:var(--on-pig)}
+.box.saved .n{color:var(--on-pig);opacity:.75}
+.box.saved::after{content:"";position:absolute;inset:6px;border-radius:8px;background:
+  linear-gradient(45deg,transparent 46%,var(--ink) 46% 54%,transparent 54%);opacity:.18;pointer-events:none}
+.box.next{background:var(--coin);animation:nudge 2.4s ease-in-out infinite}
+.box.next .v{font-family:var(--display);font-size:17px;color:#2B1B4A}
+.box.next .n{color:#2B1B4A}
+.box.just{animation:stamp .6s cubic-bezier(.3,1.6,.5,1)}
+.box:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
+
+/* Overlays */
+.scrim{position:fixed;inset:0;background:color-mix(in srgb,#140c28 85%,transparent);display:flex;align-items:flex-end;justify-content:center;z-index:50;animation:fade .2s ease}
+.scrim.center{align-items:center;padding:16px}
+.sheet{background:var(--bg);width:100%;max-width:560px;max-height:92%;overflow-y:auto;border:var(--line);border-bottom:0;border-radius:26px 26px 0 0;padding:18px 18px calc(22px + env(safe-area-inset-bottom,0px));animation:rise .28s cubic-bezier(.2,1.2,.4,1)}
+.sheet h2{font-size:26px;margin-bottom:14px}
+.dialog{background:var(--paper);border:var(--line);border-radius:22px;box-shadow:6px 6px 0 var(--ink);padding:20px;max-width:380px;width:100%;animation:popin .25s cubic-bezier(.3,1.5,.5,1)}
+.dialog h2{font-size:24px;margin-bottom:8px}
+.dialog .row{display:flex;gap:10px;justify-content:flex-end;margin-top:18px;flex-wrap:wrap}
+
+/* Forms */
+.field{margin-bottom:16px}
+.field label,.field .lbl{display:block;font-weight:700;margin-bottom:6px}
+.field input[type=text],.field input[type=number],.field input[type=date]{width:100%;border:var(--line);border-radius:14px;background:var(--paper);padding:12px 14px;min-height:50px;font-size:17px}
+.money{position:relative}
+.money span{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-weight:700}
+.money input{padding-left:30px!important}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips label{margin:0}
+.chips input{position:absolute;opacity:0;pointer-events:none}
+.chips span{display:inline-block;border:var(--line);border-radius:999px;padding:8px 14px;background:var(--paper);font-weight:500;cursor:pointer}
+.chips input:checked+span{background:var(--pig);color:var(--on-pig);font-weight:700;box-shadow:2px 2px 0 var(--ink)}
+.chips input:focus-visible+span{outline:3px solid var(--coin-deep);outline-offset:2px}
+.trio{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.trio small{display:block;color:var(--muted);font-weight:500;margin-bottom:4px}
+.preview{background:var(--paper);border:3px dashed var(--ink);border-radius:16px;padding:12px 14px;margin:6px 0 16px;font-weight:500}
+.preview.err{border-color:var(--danger);color:var(--danger)}
+details summary{cursor:pointer;font-weight:700;color:var(--muted);padding:6px 0;margin-bottom:8px}
+.setting-row{display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--paper);border:var(--line);border-radius:16px;padding:12px 14px;margin-bottom:12px}
+.switch{width:58px;height:34px;border:var(--line);border-radius:999px;background:var(--pig-light);position:relative;padding:0;flex:0 0 auto}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:var(--paper);border:2px solid var(--ink);transition:left .2s}
+.switch[aria-checked="true"]{background:var(--mint)}
+.switch[aria-checked="true"]::after{left:27px}
+.stack{display:grid;gap:12px}
+.note{color:var(--muted);font-size:14px;margin:6px 0 0}
+
+/* Reveal stage */
+.stage{text-align:center;width:100%;max-width:360px}
+.stage .boxno{font-family:var(--display);font-size:22px;color:#fff;-webkit-text-stroke:1px #2B1B4A;margin-bottom:8px}
+.mbox{width:200px;height:200px;margin:0 auto;position:relative}
+.mbox svg{width:100%;height:100%;overflow:visible}
+.mbox .lid{transform-origin:100px 70px;transition:transform .5s cubic-bezier(.3,1.4,.5,1),opacity .5s}
+.mbox.wobble{animation:wobble .95s ease-in-out}
+.mbox.open .lid{transform:translate(40px,-120px) rotate(35deg);opacity:0}
+.mbox .qmark{transition:opacity .2s}
+.mbox.open .qmark{opacity:0}
+.popamt{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%) scale(0);font-family:var(--display);font-size:64px;color:var(--coin);-webkit-text-stroke:3px #2B1B4A;paint-order:stroke fill;text-shadow:4px 4px 0 #2B1B4A;white-space:nowrap}
+.mbox.open .popamt{animation:popamt .6s cubic-bezier(.3,1.7,.5,1) forwards}
+.burst{position:absolute;left:50%;top:44%;width:0;height:0}
+.burst i{position:absolute;width:14px;height:14px;border-radius:50%;background:var(--coin);border:2px solid #2B1B4A;opacity:0}
+.burst i:nth-child(3n){background:var(--pig)}
+.burst i:nth-child(4n){background:var(--mint);border-radius:3px}
+.mbox.open .burst i{animation:burst .8s cubic-bezier(.1,.8,.3,1) forwards}
+.quip{background:var(--paper);border:var(--line);border-radius:18px;padding:12px 14px;margin:18px 0 14px;font-weight:500;box-shadow:var(--pop);opacity:0;transform:translateY(10px);transition:all .3s}
+.stage.ready .quip,.stage.ready .stage-actions{opacity:1;transform:none}
+.stage-actions{display:grid;gap:10px;opacity:0;transform:translateY(10px);transition:all .3s .1s}
+.stage-actions .link-btn{color:#fff}
+
+/* Coin rain */
+.coin-rain{position:fixed;inset:0;pointer-events:none;z-index:80;overflow:hidden}
+.coin-rain b{position:absolute;top:-50px;width:36px;height:36px;border-radius:50%;background:var(--coin);border:3px solid #2B1B4A;display:grid;place-items:center;font-family:var(--display);font-weight:400;color:#2B1B4A;font-size:18px;animation:fall 1.4s cubic-bezier(.5,0,.8,.6) forwards}
+
+/* Toast */
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:16px;font-weight:700;z-index:90;max-width:calc(100% - 32px);text-align:center;animation:toast 2.8s ease forwards}
+
+/* Celebration */
+.party{text-align:center;color:#fff}
+.party svg{width:220px;height:190px;animation:squish 1s cubic-bezier(.3,1.6,.5,1) 2}
+.party h2{font-size:40px;-webkit-text-stroke:1px #2B1B4A;margin:8px 0}
+.party p{font-weight:700;font-size:18px;margin:0 0 20px}
+
+.pig-wiggle{animation:wiggle .6s ease}
+
+@keyframes fade{from{opacity:0}}
+@keyframes rise{from{transform:translateY(100%)}}
+@keyframes popin{from{transform:scale(.8);opacity:0}}
+@keyframes wobble{
+  0%,100%{transform:rotate(0)}10%{transform:rotate(-8deg) scale(1.02)}20%{transform:rotate(8deg)}30%{transform:rotate(-10deg) scale(1.04)}
+  40%{transform:rotate(10deg)}50%{transform:rotate(-12deg) scale(1.06)}60%{transform:rotate(12deg)}70%{transform:rotate(-8deg) scale(1.08)}
+  80%{transform:rotate(6deg) translateY(-6px)}90%{transform:rotate(-3deg) translateY(-10px) scale(1.1)}}
+@keyframes popamt{0%{transform:translate(-50%,-10%) scale(0)}70%{transform:translate(-50%,-90%) scale(1.25)}100%{transform:translate(-50%,-80%) scale(1)}}
+@keyframes burst{0%{opacity:1;transform:translate(0,0) scale(.4)}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1) rotate(200deg)}}
+@keyframes fall{0%{transform:translateY(0) rotate(0)}100%{transform:translateY(110vh) rotate(var(--r))}}
+@keyframes squish{0%{transform:scale(1)}30%{transform:scale(1.15,.85)}55%{transform:scale(.92,1.1)}75%{transform:scale(1.04,.97)}100%{transform:scale(1)}}
+@keyframes wiggle{0%,100%{transform:rotate(0)}20%{transform:rotate(-9deg)}40%{transform:rotate(8deg)}60%{transform:rotate(-5deg)}80%{transform:rotate(3deg)}}
+@keyframes stamp{0%{transform:scale(1.6) rotate(-10deg)}100%{transform:scale(1) rotate(0)}}
+@keyframes nudge{0%,90%,100%{transform:rotate(0)}93%{transform:rotate(-7deg)}96%{transform:rotate(7deg)}}
+@keyframes toast{0%{opacity:0;transform:translate(-50%,20px)}10%,85%{opacity:1;transform:translate(-50%,0)}100%{opacity:0;transform:translate(-50%,10px)}}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  .coin-rain{display:none}
+}
+@media (max-width:380px){
+  .ch-hero{grid-template-columns:110px 1fr}
+  .ch-hero .meter svg{width:110px;height:94px}
+  .stat-big{font-size:30px}
+  .hero .pigbtn{flex-basis:104px}.hero .pigbtn svg{width:104px;height:88px}
+}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+
+<script>
+(() => {
+"use strict";
+const KEY = "piggyheist:v1";
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const money = n => new Intl.NumberFormat("en-AU", {style:"currency", currency:"AUD", maximumFractionDigits:0}).format(Math.round(n));
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const reduced = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const DAY = 86400000;
+
+/* ---------- Storage ---------- */
+function load() {
+  try {
+    const s = JSON.parse(localStorage.getItem(KEY));
+    if (s && Array.isArray(s.challenges)) return {sound: s.sound !== false, challenges: s.challenges};
+  } catch (e) {}
+  return {sound: true, challenges: []};
+}
+let state = load();
+function save() {
+  try { localStorage.setItem(KEY, JSON.stringify(state)); }
+  catch (e) { toast("Progress couldn't be saved on this device. Download a backup from Settings."); }
+}
+
+/* ---------- Dates ---------- */
+const todayStart = () => { const d = new Date(); d.setHours(0,0,0,0); return d; };
+const parseDay = s => { const [y,m,d] = s.split("-").map(Number); return new Date(y, m-1, d); };
+const dayStr = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+const niceDate = s => parseDay(s).toLocaleDateString("en-AU", {day:"numeric", month:"short", year:"numeric"});
+const daysLeft = c => c.endDate ? Math.round((parseDay(c.endDate) - todayStart()) / DAY) : null;
+
+/* ---------- Box generator ---------- */
+function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function makeAmounts(target, min, max, step) {
+  for (let tries = 0; tries < 60; tries++) {
+    const out = []; let rem = target, ok = true;
+    while (rem > 0) {
+      if (rem >= min && rem <= max) { out.push(rem); break; }
+      const hi = Math.min(max, rem - min);
+      if (hi < min) { ok = false; break; }
+      const count = Math.floor((hi - min) / step) + 1;
+      const a = min + step * Math.floor(Math.random() * count);
+      out.push(a); rem -= a;
+    }
+    if (ok) return shuffle(out);
+  }
+  return null;
+}
+
+/* ---------- Stats ---------- */
+function stats(c) {
+  const saved = c.boxes.reduce((t, b) => t + (b.s ? b.a : 0), 0);
+  const boxesLeft = c.boxes.filter(b => !b.s).length;
+  return {saved, left: c.target - saved, boxesLeft, total: c.boxes.length, pct: c.target ? saved / c.target : 0};
+}
+function paceHtml(c) {
+  const s = stats(c);
+  if (c.completedAt) return "";
+  const dl = daysLeft(c);
+  if (dl === null) return s.saved > 0 ? "No deadline on this one. Trevor's in no hurry." : "No deadline. Reveal your first box whenever you're ready.";
+  if (dl <= 0) return `The deadline has passed with ${money(s.left)} to go. Keep going, the pig is patient.`;
+  const weeks = dl / 7;
+  const perWeek = weeks < 1 ? s.left : Math.ceil(s.left / weeks);
+  let line = `${money(perWeek)} a week gets you there by ${niceDate(c.endDate)}.`;
+  const start = new Date(c.createdAt); start.setHours(0,0,0,0);
+  const totalDays = Math.max(1, (parseDay(c.endDate) - start) / DAY);
+  const elapsed = Math.max(0, (todayStart() - start) / DAY);
+  const expected = c.target * Math.min(1, elapsed / totalDays);
+  const diff = s.saved - expected;
+  if (elapsed >= 1 && Math.abs(diff) >= 10) {
+    line += diff > 0 ? ` <span class="ahead">${money(diff)} ahead of schedule.</span>` : ` <span class="behind">${money(-diff)} behind schedule.</span>`;
+  }
+  return line;
+}
+
+/* ---------- Quips ---------- */
+const Q = {
+  low: ["Just {a}? Trevor barely opened one eye.", "{a}. A light snack for the pig.", "Easy one. Skip one coffee and you're done.", "{a}! Trevor calls this a warm-up."],
+  mid: ["{a}. Now we're talking. Trevor sits up.", "Solid {a}. The pig approves.", "{a}. That's one fewer impulse buy.", "Trevor did a little snort at {a}."],
+  high: ["{a}! Trevor's trotters are trembling.", "Big one! {a}. Somebody's skipping takeaway.", "{a}. The pig demands tribute.", "Whoa, {a}. Trevor needs a lie down."],
+  saved: ["Into the pig it goes.", "Oink of approval received.", "Trevor is getting chonky.", "Deposited. Trevor did a happy dance.", "The heist grows.", "Trevor is now slightly heavier and much smugger."],
+  greet: ["Feed me your spare cash.", "I'm not greedy, I'm saving.", "Every box makes me rounder.", "Shake me. Go on. Hear that?"],
+};
+const revealQuip = a => pick(a <= 40 ? Q.low : a <= 70 ? Q.mid : Q.high).replace("{a}", money(a));
+
+/* ---------- Sound ---------- */
+let ac = null;
+function actx() {
+  if (!state.sound) return null;
+  if (!ac) { const A = window.AudioContext || window.webkitAudioContext; if (!A) return null; try { ac = new A(); } catch (e) { return null; } }
+  if (ac.state === "suspended") ac.resume();
+  return ac;
+}
+function oink() {
+  const c = actx(); if (!c) return; const t = c.currentTime;
+  [0, 0.17].forEach((off, k) => {
+    const o = c.createOscillator(), f = c.createBiquadFilter(), g = c.createGain();
+    o.type = "sawtooth";
+    o.frequency.setValueAtTime(k ? 300 : 250, t + off);
+    o.frequency.exponentialRampToValueAtTime(130, t + off + 0.13);
+    f.type = "lowpass"; f.frequency.value = 950; f.Q.value = 9;
+    g.gain.setValueAtTime(0.0001, t + off);
+    g.gain.exponentialRampToValueAtTime(0.22, t + off + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + off + 0.15);
+    o.connect(f).connect(g).connect(c.destination); o.start(t + off); o.stop(t + off + 0.17);
+  });
+}
+function tone(freq, when, dur, type = "sine", vol = 0.18) {
+  const c = actx(); if (!c) return; const t = c.currentTime + when;
+  const o = c.createOscillator(), g = c.createGain();
+  o.type = type; o.frequency.value = freq;
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g).connect(c.destination); o.start(t); o.stop(t + dur + 0.02);
+}
+const drumroll = () => { for (let i = 0; i < 9; i++) tone(110 + i * 12, i * 0.1, 0.06, "triangle", 0.2); };
+const ding = () => { tone(1318, 0, 0.25); tone(1760, 0.09, 0.35); };
+const fanfare = () => { [523, 659, 784, 1046].forEach((f, i) => tone(f, i * 0.13, 0.3, "square", 0.08)); };
+
+/* ---------- Pig art ---------- */
+let pigSeq = 0;
+function pigSvg({fill = null, hat = false} = {}) {
+  const id = "pc" + (++pigSeq);
+  const p = fill === null ? 1 : Math.max(0, Math.min(1, fill));
+  const top = 34, h = 122; // body spans y 34..156
+  const fillY = (1 - p) * h;
+  const bodyFill = fill === null ? "var(--pig)" : "var(--pig-light)";
+  return `<svg viewBox="0 0 220 180" aria-hidden="true">
+  <defs><clipPath id="${id}"><ellipse cx="104" cy="95" rx="80" ry="61"/></clipPath></defs>
+  <path d="M182 96c16-4 22 8 14 14s-16-2-8-8" fill="none" stroke="var(--ink)" stroke-width="4" stroke-linecap="round"/>
+  <rect x="50" y="138" width="22" height="30" rx="8" fill="var(--pig-deep)" stroke="var(--ink)" stroke-width="3.5"/>
+  <rect x="136" y="138" width="22" height="30" rx="8" fill="var(--pig-deep)" stroke="var(--ink)" stroke-width="3.5"/>
+  <path d="M52 50 L44 14 L84 36 Z" fill="var(--pig-deep)" stroke="var(--ink)" stroke-width="3.5" stroke-linejoin="round"/>
+  <path d="M156 50 L164 14 L124 36 Z" fill="var(--pig-deep)" stroke="var(--ink)" stroke-width="3.5" stroke-linejoin="round"/>
+  <ellipse cx="104" cy="95" rx="80" ry="61" fill="${bodyFill}"/>
+  ${fill === null ? "" : `<g clip-path="url(#${id})"><g class="fillg" style="transform:translateY(${fillY}px);transition:transform 1s cubic-bezier(.3,1.3,.5,1)">
+     <path d="M0 ${top} q13 -8 26 0 t26 0 t26 0 t26 0 t26 0 t26 0 t26 0 t26 0 V200 H0Z" fill="var(--pig)"/></g></g>`}
+  <ellipse cx="104" cy="95" rx="80" ry="61" fill="none" stroke="var(--ink)" stroke-width="3.5"/>
+  <rect x="88" y="40" width="32" height="8" rx="4" fill="var(--ink)"/>
+  <circle cx="80" cy="84" r="6.5" fill="var(--ink)"/><circle cx="82" cy="82" r="2" fill="#fff"/>
+  <circle cx="128" cy="84" r="6.5" fill="var(--ink)"/><circle cx="130" cy="82" r="2" fill="#fff"/>
+  <ellipse cx="66" cy="104" rx="9" ry="6" fill="var(--pig-deep)" opacity=".55"/><ellipse cx="142" cy="104" rx="9" ry="6" fill="var(--pig-deep)" opacity=".55"/>
+  <ellipse cx="104" cy="110" rx="26" ry="18" fill="var(--pig-deep)" stroke="var(--ink)" stroke-width="3.5"/>
+  <ellipse cx="95" cy="110" rx="4" ry="6.5" fill="var(--ink)"/><ellipse cx="113" cy="110" rx="4" ry="6.5" fill="var(--ink)"/>
+  ${hat ? `<path d="M86 42 L104 -6 L122 42 Z" fill="var(--coin)" stroke="var(--ink)" stroke-width="3.5" stroke-linejoin="round"/><circle cx="104" cy="-8" r="7" fill="var(--mint)" stroke="var(--ink)" stroke-width="3"/>` : ""}
+  </svg>`;
+}
+const gearSvg = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>`;
+function mysteryBoxSvg() {
+  return `<svg viewBox="0 0 200 200" aria-hidden="true">
+    <rect x="30" y="80" width="140" height="110" rx="10" fill="var(--pig)" stroke="#2B1B4A" stroke-width="4"/>
+    <rect x="88" y="80" width="24" height="110" fill="var(--coin)" stroke="#2B1B4A" stroke-width="4"/>
+    <text class="qmark" x="59" y="155" text-anchor="middle" font-family="Bagel Fat One, sans-serif" font-size="44" fill="#fff" stroke="#2B1B4A" stroke-width="3" paint-order="stroke">?</text>
+    <text class="qmark" x="141" y="155" text-anchor="middle" font-family="Bagel Fat One, sans-serif" font-size="44" fill="#fff" stroke="#2B1B4A" stroke-width="3" paint-order="stroke">?</text>
+    <g class="lid">
+      <rect x="20" y="56" width="160" height="30" rx="8" fill="var(--pig-deep)" stroke="#2B1B4A" stroke-width="4"/>
+      <rect x="86" y="56" width="28" height="30" fill="var(--coin)" stroke="#2B1B4A" stroke-width="4"/>
+      <path d="M100 56 C70 20 50 40 72 54 M100 56 C130 20 150 40 128 54" fill="var(--coin)" stroke="#2B1B4A" stroke-width="4" stroke-linejoin="round"/>
+    </g>
+  </svg>`;
+}
+
+/* ---------- Toast & effects ---------- */
+function toast(msg) {
+  document.querySelectorAll(".toast").forEach(t => t.remove());
+  const t = document.createElement("div"); t.className = "toast"; t.setAttribute("role", "status"); t.textContent = msg;
+  document.body.appendChild(t); setTimeout(() => t.remove(), 2900);
+}
+function coinRain(n = 18) {
+  if (reduced()) return;
+  const r = document.createElement("div"); r.className = "coin-rain";
+  for (let i = 0; i < n; i++) {
+    const b = document.createElement("b"); b.textContent = "$";
+    b.style.left = (Math.random() * 94) + "%";
+    b.style.animationDelay = (Math.random() * 0.5) + "s";
+    b.style.setProperty("--r", (Math.random() * 720 - 360) + "deg");
+    r.appendChild(b);
+  }
+  document.body.appendChild(r); setTimeout(() => r.remove(), 2200);
+}
+function wiggle(el) { if (!el) return; el.classList.remove("pig-wiggle"); void el.offsetWidth; el.classList.add("pig-wiggle"); }
+
+/* ---------- Overlays ---------- */
+function overlay(html, {center = false, onClose} = {}) {
+  const s = document.createElement("div"); s.className = "scrim" + (center ? " center" : "");
+  s.innerHTML = html; document.body.appendChild(s);
+  const prev = document.activeElement;
+  const close = () => { s.remove(); document.removeEventListener("keydown", key); if (onClose) onClose(); if (prev && prev.focus) prev.focus(); };
+  const key = e => { if (e.key === "Escape") close(); };
+  document.addEventListener("keydown", key);
+  s.addEventListener("click", e => { if (e.target === s) close(); });
+  setTimeout(() => { const f = s.querySelector("[autofocus], button, input"); if (f) f.focus(); }, 50);
+  return {el: s, close};
+}
+function confirmDialog({title, body, ok, danger = false}) {
+  return new Promise(res => {
+    let done = false;
+    const o = overlay(`<div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dlg-t">
+      <h2 id="dlg-t">${esc(title)}</h2><p>${body}</p>
+      <div class="row"><button class="btn" data-no>Cancel</button><button class="btn ${danger ? "danger" : "pig"}" data-yes>${esc(ok)}</button></div></div>`,
+      {center: true, onClose: () => { if (!done) res(false); }});
+    o.el.querySelector("[data-no]").onclick = () => o.close();
+    o.el.querySelector("[data-yes]").onclick = () => { done = true; o.close(); res(true); };
+  });
+}
+
+/* ---------- Routing ---------- */
+const current = () => { const m = location.hash.match(/^#\/c\/(.+)$/); return m ? state.challenges.find(c => c.id === m[1]) : null; };
+window.addEventListener("hashchange", () => { render(); window.scrollTo(0, 0); });
+
+/* ---------- Render ---------- */
+function topBar() {
+  return `<div class="top"><button class="brand" data-home aria-label="Piggy Heist home">${pigSvg()}<span>Piggy Heist</span></button>
+    <button class="icon-btn" data-settings aria-label="Settings">${gearSvg}</button></div>`;
+}
+function render() {
+  const c = current();
+  if (location.hash.startsWith("#/c/") && !c) { history.replaceState(null, "", location.pathname + location.search); }
+  $("#app").innerHTML = topBar() + (c ? challengeView(c) : homeView());
+}
+function cardHtml(c) {
+  const s = stats(c), dl = daysLeft(c);
+  const time = c.completedAt ? `Finished ${niceDate(dayStr(new Date(c.completedAt)))}` : dl === null ? "No deadline" : dl > 0 ? `${dl} day${dl === 1 ? "" : "s"} left` : "Deadline passed";
+  return `<button class="card${c.completedAt ? " done" : ""}" data-open="${c.id}">
+    <h3>${esc(c.name)}</h3>
+    <div><span class="amt">${money(s.saved)}</span> of ${money(c.target)}</div>
+    <div class="bar"><i class="${s.pct === 0 ? "zero" : ""}" style="width:${(s.pct * 100).toFixed(1)}%"></i></div>
+    <div class="meta"><span>${s.boxesLeft} of ${s.total} boxes left</span><span>${time}</span>${c.upNext != null && !c.completedAt ? `<span class="badge">A box is waiting</span>` : ""}</div>
+  </button>`;
+}
+function homeView() {
+  const active = state.challenges.filter(c => !c.completedAt);
+  const done = state.challenges.filter(c => c.completedAt);
+  const total = state.challenges.reduce((t, c) => t + stats(c).saved, 0);
+  const bubble = state.challenges.length
+    ? `Trevor is guarding<strong>${money(total)}</strong>${esc(pick(Q.greet))}`
+    : `<strong>G'day, I'm Trevor.</strong>Start a challenge and I'll hide the amounts. You just feed me.`;
+  return `<div class="hero"><button class="pigbtn" data-pig aria-label="Poke Trevor the pig">${pigSvg()}</button><div class="bubble">${bubble}</div></div>
+    <button class="btn pig big block" data-new>New challenge</button>
+    <h2 class="section-h">Running</h2>
+    ${active.length ? `<div class="cards">${active.map(cardHtml).join("")}</div>` : `<div class="empty">No challenges running. Tap New challenge to start one.</div>`}
+    ${done.length ? `<h2 class="section-h">Completed</h2><div class="cards">${done.map(cardHtml).join("")}</div>` : ""}`;
+}
+function challengeView(c) {
+  const s = stats(c);
+  let zone;
+  if (c.completedAt) {
+    zone = `<div class="done-banner"><div class="display">Challenge complete</div><div>${money(c.target)} saved. Trevor is thrilled.</div></div>`;
+  } else if (c.upNext != null) {
+    const b = c.boxes[c.upNext];
+    zone = `<div class="upnext"><div class="grow"><div class="lbl">Up next: box ${c.upNext + 1}</div><div class="amt">${money(b.a)}</div></div>
+      <button class="btn mint" data-save="${c.upNext}">Saved it</button></div>`;
+  } else {
+    zone = `<button class="btn pig big block" data-reveal>Reveal today's amount</button>`;
+  }
+  const grid = c.boxes.map((b, i) => {
+    if (b.s) return `<button class="box saved" data-box="${i}" aria-label="Box ${i + 1}, ${money(b.a)} saved"><span class="n">${i + 1}</span><span class="v">${b.a}</span></button>`;
+    if (i === c.upNext) return `<button class="box next" data-box="${i}" aria-label="Box ${i + 1}, ${money(b.a)}, up next"><span class="n">${i + 1}</span><span class="v">${b.a}</span></button>`;
+    return `<button class="box" data-box="${i}" aria-label="Box ${i + 1}, hidden"><span class="n">${i + 1}</span><span class="q">?</span></button>`;
+  }).join("");
+  const pace = paceHtml(c);
+  return `<button class="back" data-home>‹ All challenges</button>
+    <h1 class="ch-title">${esc(c.name)}</h1>
+    <div class="ch-hero"><div class="meter" data-meter>${pigSvg({fill: s.pct})}</div>
+      <div><div class="stat-big">${money(s.saved)}</div><div class="stat-sub">${money(Math.max(0, s.left))} to go</div>
+      <div class="stat-small">${s.total - s.boxesLeft} of ${s.total} boxes done</div></div></div>
+    ${pace ? `<p class="pace">${pace}</p>` : ""}
+    <div class="reveal-zone">${zone}</div>
+    <div class="grid-h"><h2>The boxes</h2><span>Tap a saved box to undo</span></div>
+    <div class="grid">${grid}</div>
+    <p style="text-align:center;margin-top:28px"><button class="link-btn danger" data-delete>Delete this challenge</button></p>`;
+}
+
+/* ---------- Actions ---------- */
+function reveal(c) {
+  if (c.completedAt) return;
+  if (c.upNext == null) {
+    const open = []; c.boxes.forEach((b, i) => { if (!b.s) open.push(i); });
+    if (!open.length) return;
+    c.upNext = pick(open); save();
+  }
+  showStage(c, c.upNext);
+}
+function showStage(c, i) {
+  const a = c.boxes[i].a;
+  const bits = Array.from({length: 16}, (_, k) => {
+    const ang = (k / 16) * Math.PI * 2, d = 90 + Math.random() * 60;
+    return `<i style="--dx:${Math.cos(ang) * d}px;--dy:${Math.sin(ang) * d}px;animation-delay:${Math.random() * .08}s"></i>`;
+  }).join("");
+  const o = overlay(`<div class="stage" role="dialog" aria-modal="true" aria-label="Box ${i + 1} revealed">
+    <div class="boxno">Box ${i + 1}</div>
+    <div class="mbox">${mysteryBoxSvg()}<div class="burst">${bits}</div><div class="popamt">${money(a)}</div></div>
+    <div class="quip">${esc(revealQuip(a))}</div>
+    <div class="stage-actions"><button class="btn mint big block" data-stage-save>Saved it</button><button class="link-btn" data-stage-later>Save it later</button></div>
+  </div>`, {center: true, onClose: render});
+  const box = o.el.querySelector(".mbox"), stage = o.el.querySelector(".stage");
+  o.el.querySelector("[data-stage-later]").onclick = () => o.close();
+  o.el.querySelector("[data-stage-save]").onclick = () => { o.close(); saveBox(c, i); };
+  const wait = reduced() ? 50 : 950;
+  if (!reduced()) { box.classList.add("wobble"); drumroll(); }
+  setTimeout(() => { box.classList.add("open"); ding(); setTimeout(() => { stage.classList.add("ready"); o.el.querySelector("[data-stage-save]").focus(); }, reduced() ? 0 : 450); }, wait);
+}
+function saveBox(c, i) {
+  if (c.boxes[i].s) return;
+  const before = stats(c).pct;
+  c.boxes[i].s = new Date().toISOString();
+  if (c.upNext === i) c.upNext = null;
+  const finished = c.boxes.every(b => b.s);
+  if (finished) c.completedAt = new Date().toISOString();
+  save();
+  render();
+  // Animate the pig filling from the old level to the new one
+  const meter = $("[data-meter]");
+  if (meter) {
+    const g = meter.querySelector(".fillg");
+    const after = stats(c).pct;
+    if (g && !reduced()) {
+      const tr = g.style.transition;
+      g.style.transition = "none"; g.style.transform = `translateY(${(1 - before) * 122}px)`;
+      void g.getBoundingClientRect();
+      g.style.transition = tr; g.style.transform = `translateY(${(1 - after) * 122}px)`;
+    }
+    meter.classList.remove("bounce"); void meter.offsetWidth; meter.classList.add("bounce");
+  }
+  const cell = document.querySelector(`[data-box="${i}"]`); if (cell) cell.classList.add("just");
+  coinRain(); oink();
+  if (finished) setTimeout(() => celebrate(c), reduced() ? 100 : 1100);
+  else toast(pick(Q.saved));
+}
+function celebrate(c) {
+  fanfare(); coinRain(40);
+  const o = overlay(`<div class="party" role="dialog" aria-modal="true" aria-labelledby="party-t">${pigSvg({hat: true})}
+    <h2 id="party-t">Heist complete!</h2><p>${money(c.target)} saved in ${esc(c.name)}.</p>
+    <button class="btn coin big" data-ok>Take a bow</button></div>`, {center: true});
+  o.el.querySelector("[data-ok]").onclick = () => o.close();
+}
+async function tapBox(c, i) {
+  const b = c.boxes[i];
+  if (b.s) {
+    const yes = await confirmDialog({title: "Undo this box?", body: `Box ${i + 1} (${money(b.a)}) goes back in the pile as a hidden box.`, ok: "Undo box"});
+    if (!yes) return;
+    b.s = null; c.completedAt = null; save(); render(); toast(`Box ${i + 1} is back in the pile.`);
+  } else if (i === c.upNext) {
+    showStage(c, i);
+  } else {
+    wiggle(document.querySelector(`[data-box="${i}"]`));
+    toast(c.upNext != null ? "Finish your up-next box first." : "No peeking. Tap Reveal and Trevor picks for you.");
+  }
+}
+async function deleteChallenge(c) {
+  const yes = await confirmDialog({title: "Delete this challenge?", body: `${esc(c.name)} and all its boxes will be gone for good.`, ok: "Delete", danger: true});
+  if (!yes) return;
+  state.challenges = state.challenges.filter(x => x.id !== c.id); save();
+  location.hash = ""; render(); toast("Challenge deleted.");
+}
+
+/* ---------- New challenge ---------- */
+function newSheet() {
+  const n = state.challenges.length + 1;
+  const o = overlay(`<form class="sheet" role="dialog" aria-modal="true" aria-labelledby="new-t" novalidate>
+    <h2 id="new-t">New challenge</h2>
+    <div class="field"><label for="f-name">Name</label><input id="f-name" type="text" maxlength="40" placeholder="Holiday fund" autocomplete="off"></div>
+    <div class="field"><label for="f-target">Savings target</label><div class="money"><span>$</span><input id="f-target" type="number" inputmode="numeric" min="1" value="5000"></div></div>
+    <div class="field"><span class="lbl" id="dur-l">Time to do it</span><div class="chips" role="radiogroup" aria-labelledby="dur-l">
+      ${[["0","No deadline"],["3","3 months"],["6","6 months"],["12","1 year"],["date","Pick a date"]].map(([v,t],k) =>
+        `<label><input type="radio" name="dur" value="${v}" ${k === 3 ? "checked" : ""}><span>${t}</span></label>`).join("")}
+    </div></div>
+    <div class="field" id="date-wrap" hidden><label for="f-date">Finish by</label><input id="f-date" type="date"></div>
+    <details><summary>Box amounts ($20 to $100 in $10 steps)</summary>
+      <div class="field trio">
+        <label><small>Smallest</small><div class="money"><span>$</span><input id="f-min" type="number" inputmode="numeric" value="20"></div></label>
+        <label><small>Biggest</small><div class="money"><span>$</span><input id="f-max" type="number" inputmode="numeric" value="100"></div></label>
+        <label><small>Steps of</small><div class="money"><span>$</span><input id="f-step" type="number" inputmode="numeric" value="10"></div></label>
+      </div></details>
+    <div class="preview" id="preview" aria-live="polite"></div>
+    <button class="btn pig big block" type="submit">Start challenge</button>
+  </form>`);
+  const f = o.el.querySelector("form");
+  const dateIn = f.querySelector("#f-date");
+  const tomorrow = new Date(todayStart().getTime() + DAY); dateIn.min = dayStr(tomorrow);
+  const read = () => {
+    const num = id => Math.round(Number(f.querySelector(id).value));
+    const min = num("#f-min"), max = num("#f-max"), step = num("#f-step"), raw = Number(f.querySelector("#f-target").value);
+    const dur = f.querySelector("input[name=dur]:checked").value;
+    let end = null;
+    if (dur === "date") end = dateIn.value || null;
+    else if (dur !== "0") { const d = todayStart(); d.setMonth(d.getMonth() + Number(dur)); end = dayStr(d); }
+    let err = "";
+    if (!(step > 0)) err = "Steps need to be at least $1.";
+    else if (!(min > 0) || !(max >= min)) err = "Biggest box needs to be the same or more than the smallest.";
+    else if (min % step || max % step) err = `Smallest and biggest need to be multiples of $${step}.`;
+    else if (!(raw > 0)) err = "Enter a savings target.";
+    const target = step > 0 ? Math.max(step, Math.round(raw / step) * step) : 0;
+    if (!err && target < min) err = `The target needs to be at least ${money(min)}.`;
+    if (!err && target / min > 3000) err = "That's a lot of boxes. Try a smaller target or bigger box amounts.";
+    if (!err && dur === "date" && !end) err = "Pick a finish date.";
+    if (!err && end && parseDay(end) <= todayStart()) err = "The finish date needs to be in the future.";
+    return {min, max, step, raw, target, end, err};
+  };
+  const update = () => {
+    f.querySelector("#date-wrap").hidden = f.querySelector("input[name=dur]:checked").value !== "date";
+    const r = read(), p = f.querySelector("#preview");
+    if (r.err) { p.className = "preview err"; p.textContent = r.err; return; }
+    const est = Math.max(1, Math.round(r.target / ((r.min + r.max) / 2)));
+    let t = `About ${est} hidden boxes adding up to exactly ${money(r.target)}.`;
+    if (r.target !== r.raw) t = `Rounded to ${money(r.target)}. ` + t;
+    if (r.end) { const wk = Math.max(1, (parseDay(r.end) - todayStart()) / DAY / 7); t += ` Roughly ${money(Math.ceil(r.target / wk))} a week to finish by ${niceDate(r.end)}.`; }
+    p.className = "preview"; p.textContent = t;
+  };
+  f.addEventListener("input", update); f.addEventListener("change", update); update();
+  f.addEventListener("submit", e => {
+    e.preventDefault();
+    const r = read(); if (r.err) { update(); return; }
+    const amounts = makeAmounts(r.target, r.min, r.max, r.step);
+    if (!amounts) { const p = f.querySelector("#preview"); p.className = "preview err"; p.textContent = `Those box amounts can't add up to exactly ${money(r.target)}. Try a different target or smallest box.`; return; }
+    const name = f.querySelector("#f-name").value.trim() || `Challenge ${n}`;
+    const c = {id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), name, target: r.target, min: r.min, max: r.max, step: r.step,
+      createdAt: new Date().toISOString(), endDate: r.end, boxes: amounts.map(a => ({a, s: null})), upNext: null, completedAt: null};
+    state.challenges.unshift(c); save(); o.close(); oink();
+    location.hash = "#/c/" + c.id;
+    toast(`${c.boxes.length} boxes hidden. Good luck!`);
+  });
+}
+
+/* ---------- Settings, backup, restore ---------- */
+const downloadsCap = (window.claude && typeof window.claude.use === "function") ? window.claude.use("downloads").catch(() => null) : Promise.resolve(null);
+async function downloadBackup() {
+  const data = JSON.stringify({app: "piggy-heist", version: 1, exportedAt: new Date().toISOString(), sound: state.sound, challenges: state.challenges}, null, 2);
+  const filename = `piggy-heist-backup-${dayStr(new Date())}.json`;
+  const dl = await downloadsCap;
+  if (dl) {
+    try { await dl.save({filename, data}); toast("Backup saved."); }
+    catch (e) { if (!e || e.code !== "declined") toast("The backup couldn't be saved here."); }
+    return;
+  }
+  const url = URL.createObjectURL(new Blob([data], {type: "application/json"}));
+  const a = document.createElement("a"); a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 2000); toast("Backup downloaded.");
+}
+function validBackup(d) {
+  return d && Array.isArray(d.challenges) && d.challenges.every(c => c && typeof c.id === "string" && typeof c.name === "string" &&
+    Number.isFinite(c.target) && Array.isArray(c.boxes) && c.boxes.every(b => b && Number.isFinite(b.a)));
+}
+function settingsSheet() {
+  const o = overlay(`<div class="sheet" role="dialog" aria-modal="true" aria-labelledby="set-t">
+    <h2 id="set-t">Settings</h2>
+    <div class="setting-row"><div><strong>Sound effects</strong><div class="note" style="margin:0">Oinks, dings and drumrolls</div></div>
+      <button class="switch" role="switch" aria-checked="${state.sound}" aria-label="Sound effects" data-sound></button></div>
+    <div class="stack">
+      <button class="btn block" data-backup>Download backup</button>
+      <button class="btn block" data-restore>Restore from backup</button>
+      <input type="file" accept="application/json,.json" hidden data-file>
+    </div>
+    <p class="note">Your challenges are saved on this device only. Download a backup before changing phones or clearing your browser.</p>
+  </div>`);
+  const el = o.el;
+  el.querySelector("[data-sound]").onclick = e => { state.sound = !state.sound; save(); e.currentTarget.setAttribute("aria-checked", state.sound); if (state.sound) oink(); };
+  el.querySelector("[data-backup]").onclick = downloadBackup;
+  const file = el.querySelector("[data-file]");
+  el.querySelector("[data-restore]").onclick = () => file.click();
+  file.onchange = async () => {
+    const fl = file.files && file.files[0]; if (!fl) return;
+    let d; try { d = JSON.parse(await fl.text()); } catch (e) { d = null; }
+    file.value = "";
+    if (!validBackup(d)) { toast("That file isn't a Piggy Heist backup."); return; }
+    const yes = await confirmDialog({title: "Replace your challenges?", body: `This swaps everything on this device for the ${d.challenges.length} challenge${d.challenges.length === 1 ? "" : "s"} in the backup.`, ok: "Restore", danger: true});
+    if (!yes) return;
+    state = {sound: d.sound !== false, challenges: d.challenges.map(c => ({...c, upNext: Number.isInteger(c.upNext) ? c.upNext : null, completedAt: c.completedAt || null, endDate: c.endDate || null}))};
+    save(); o.close(); location.hash = ""; render(); toast("Backup restored.");
+  };
+}
+
+/* ---------- Event delegation ---------- */
+document.addEventListener("click", e => {
+  const t = e.target.closest("button"); if (!t) return;
+  const c = current();
+  if (t.hasAttribute("data-home")) { if (location.hash) location.hash = ""; else render(); }
+  else if (t.hasAttribute("data-settings")) settingsSheet();
+  else if (t.hasAttribute("data-new")) newSheet();
+  else if (t.hasAttribute("data-pig")) { wiggle(t.querySelector("svg")); oink(); }
+  else if (t.dataset.open) location.hash = "#/c/" + t.dataset.open;
+  else if (c && t.hasAttribute("data-reveal")) reveal(c);
+  else if (c && t.dataset.save != null && t.hasAttribute("data-save")) saveBox(c, Number(t.dataset.save));
+  else if (c && t.dataset.box != null) tapBox(c, Number(t.dataset.box));
+  else if (c && t.hasAttribute("data-delete")) deleteChallenge(c);
+});
+
+/* ---------- Offline support ---------- */
+if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+  window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
+}
+
+render();
+})();
+</script>
+</body>
+</html>
